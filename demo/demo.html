@@ -1,25 +1,41 @@
 <!DOCTYPE html>
 <html>
-<head lang="en">
-    <meta charset="UTF-8">
+  <head lang="en">
+    <meta charset="UTF-8" />
     <title>Vim.js</title>
     <style type="text/css">
-        body>div{width: 80%}
-        body>div p{margin: 0;margin-bottom: 10px;font-size: 18px;color: #888;}
-        input{width: 100%;font-size: 16px;height: 20px;margin-bottom: 15px;}
-        textarea{font-size: 16px;;width:100%;word-break: normal;}
+      body > div {
+        width: 80%;
+      }
+      body > div p {
+        margin: 0;
+        margin-bottom: 10px;
+        font-size: 18px;
+        color: #888;
+      }
+      input {
+        width: 100%;
+        font-size: 16px;
+        height: 20px;
+        margin-bottom: 15px;
+      }
+      textarea {
+        font-size: 16px;
+        width: 100%;
+        word-break: normal;
+      }
     </style>
-</head>
-<body>
-<div>
-<p>email</p>
-<input type="text" value="toplan710@gmail.com">
-<p>password</p>
-<input type="password" value="123456">
-<p>tile</p>
-<input type="text" value="Welcome to Vim.js">
-<p>content</p>
-<textarea rows="30">
+  </head>
+  <body>
+    <div>
+      <p>email</p>
+      <input type="text" value="toplan710@gmail.com" class="vim" />
+      <p>password</p>
+      <input type="password" value="123456" class="vim" />
+      <p>tile</p>
+      <input type="text" value="Welcome to Vim.js" class="vim" />
+      <p>content</p>
+      <textarea rows="30" class="vim">
 The MIT License (MIT)
 
 Copyright (c) (top lan)
@@ -41,18 +57,20 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-</textarea>
-<p>note</p>
-<textarea rows="10"></textarea>
-</div>
-</body>
-<script src="../build/vim.js"></script>
-<script type="text/javascript">
+</textarea
+      >
+      <p>note</p>
+      <textarea rows="10" class="vim"></textarea>
+    </div>
+  </body>
+  <script src="../build/vim.js"></script>
+  <script type="text/javascript">
     vim.open({
-        debug : true,
-        showMsg: function(msg){
-            alert('msg:' + msg);
-        }
+      debug: true,
+      showMsg: function (msg) {
+        alert('msg:' + msg);
+      },
+      selector: '.vim',
     });
-</script>
+  </script>
 </html>

@@ -42,7 +42,7 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var _ = __webpack_require__(1);
 	var extend = _.extend;
@@ -112,9 +112,9 @@
 	    }
 	};
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * Created by top on 15-9-6.
@@ -141,9 +141,9 @@
 	}
 
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * Created by top on 15-9-6.
@@ -194,9 +194,9 @@
 	}
 
 
-/***/ },
+/***/ }),
 /* 3 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * Created by top on 15-9-6.
@@ -557,9 +557,9 @@
 	};
 
 
-/***/ },
+/***/ }),
 /* 4 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * default mode
@@ -591,9 +591,9 @@
 	 */
 	exports.visualCursor = undefined;
 
-/***/ },
+/***/ }),
 /* 5 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * Created by top on 15-9-6.
@@ -906,9 +906,9 @@
 	};
 
 
-/***/ },
+/***/ }),
 /* 6 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * Created by top on 15-9-6.
@@ -1150,9 +1150,9 @@
 	};
 
 
-/***/ },
+/***/ }),
 /* 7 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * Created by top on 15-9-6.
@@ -1367,41 +1367,59 @@
 	
 
 
-/***/ },
+/***/ }),
 /* 8 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * Created by top on 15-9-6.
 	 */
 	
 	module.exports = {
+	  /**
+	   * whether to print debut messages
+	   */
+	  debug: true,
 	
-	    /**
-	     * whether to print debut messages
-	     */
-	    debug: true,
+	  /**
+	   * how to show msg from vim app
+	   * @param msg
+	   * @param code
+	   */
+	  showMsg: function (msg, code) {
+	    alert(msg);
+	  },
 	
-	    /**
-	     * how to show msg from vim app
-	     * @param msg
-	     * @param code
-	     */
-	    showMsg: function(msg, code) {
-	        alert(msg);
-	    },
+	  /**
+	   * key codes white list of vim,
+	   * they are effective in general and visual mode
+	   */
+	  key_code_white_list: [
+	    9,
+	    112,
+	    113,
+	    114,
+	    115,
+	    116,
+	    117,
+	    118,
+	    119,
+	    120,
+	    121,
+	    122,
+	    123,
+	  ],
 	
-	    /**
-	     * key codes white list of vim,
-	     * they are effective in general and visual mode
-	     */
-	    key_code_white_list: [9, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123]
-	}
+	  /**
+	   * Selector for elements to use
+	   */
+	  selector: 'input, textarea',
+	};
 
 
-/***/ },
+/***/ }),
 /* 9 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * Created by top on 15-9-6.
@@ -1475,113 +1493,114 @@
 	}
 
 
-/***/ },
+/***/ }),
 /* 10 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * Created by top on 15-9-6.
 	 */
 	const GENERAL = 'general_mode';
-	const VISUAL  = 'visual_mode';
+	const VISUAL = 'visual_mode';
 	
 	var _ = __webpack_require__(1);
 	var filter = __webpack_require__(11);
 	var App;
 	
-	exports.listen = function(app) {
-	    App = app;
-	    var boxes = window.document.querySelectorAll('input, textarea');
-	    App.boxes = boxes;
-	    for (var i = 0; i<boxes.length;i++) {
-	        var box = boxes[i];
-	        box.onfocus = onFocus;
-	        box.onclick = onClick;
-	        box.onkeydown = onKeyDown;
+	exports.listen = function (app) {
+	  App = app;
+	  var boxes = window.document.querySelectorAll(App.config.selector);
+	  console.log(boxes);
+	  App.boxes = boxes;
+	  for (var i = 0; i < boxes.length; i++) {
+	    var box = boxes[i];
+	    box.onfocus = onFocus;
+	    box.onclick = onClick;
+	    box.onkeydown = onKeyDown;
+	  }
+	  App._on('reset_cursor_position', function (e) {
+	    if (App.vim.isMode(GENERAL) || App.vim.isMode(VISUAL)) {
+	      App.vim.resetCursorByMouse();
 	    }
-	    App._on('reset_cursor_position', function (e) {
-	        if (App.vim.isMode(GENERAL) || App.vim.isMode(VISUAL)) {
-	            App.vim.resetCursorByMouse();
-	        }
-	    });
-	    App._on('input', function(ev, replaced){
-	        var code = getCode(ev);
-	        App._log('mode:'+App.vim.currentMode);
-	        if (replaced) {
-	            App.recordText();
-	            return;
-	        }
-	        if (filter.code(App, code)) {
-	            var unionCode = App.isUnionCode(code, -1);
-	            var vimKeys = App.router.getKeys();
-	            if (unionCode && vimKeys[unionCode]) {
-	                code = unionCode;
-	            }
-	            App._log('key code:'+code);
-	            var num = App.numberManager(code);
-	            App.parseRoute(code, ev, num);
-	        }
-	    });
-	}
+	  });
+	  App._on('input', function (ev, replaced) {
+	    var code = getCode(ev);
+	    App._log('mode:' + App.vim.currentMode);
+	    if (replaced) {
+	      App.recordText();
+	      return;
+	    }
+	    if (filter.code(App, code)) {
+	      var unionCode = App.isUnionCode(code, -1);
+	      var vimKeys = App.router.getKeys();
+	      if (unionCode && vimKeys[unionCode]) {
+	        code = unionCode;
+	      }
+	      App._log('key code:' + code);
+	      var num = App.numberManager(code);
+	      App.parseRoute(code, ev, num);
+	    }
+	  });
+	};
 	
 	function onFocus() {
-	    App.currentEle = this;
-	    App.textUtil.setEle(this);
-	    App.vim.setTextUtil(App.textUtil);
-	    App.vim.resetVim();
-	    App.controller.setVim(App.vim);
-	    App.controller.setTextUtil(App.textUtil);
-	    App.initNumber();
+	  App.currentEle = this;
+	  App.textUtil.setEle(this);
+	  App.vim.setTextUtil(App.textUtil);
+	  App.vim.resetVim();
+	  App.controller.setVim(App.vim);
+	  App.controller.setTextUtil(App.textUtil);
+	  App.initNumber();
 	}
 	
 	function onClick(e) {
-	    var ev = e || event || window.event;
-	    App._fire('reset_cursor_position', ev);
+	  var ev = e || event || window.event;
+	  App._fire('reset_cursor_position', ev);
 	}
 	
 	function onKeyDown(e) {
-	    var replaced = false;
-	    var ev = getEvent(e);
-	    var code = getCode(e);
-	    if (_.indexOf(App.key_code_white_list, code) !== -1) {
-	        return;
-	    }
-	    if (App.vim.isMode(GENERAL) || App.vim.isMode(VISUAL)) {
-	        if (App.vim.replaceRequest) {
-	            replaced = true;
-	            App.vim.replaceRequest = false;
-	            setTimeout(function () {
-	                App.vim.selectPrevCharacter();
-	            }, 50);
-	        } else {
-	            if (ev.preventDefault) {
-	                ev.preventDefault();
-	            } else {
-	                ev.returnValue = false;
-	            }
-	        }
+	  var replaced = false;
+	  var ev = getEvent(e);
+	  var code = getCode(e);
+	  if (_.indexOf(App.key_code_white_list, code) !== -1) {
+	    return;
+	  }
+	  if (App.vim.isMode(GENERAL) || App.vim.isMode(VISUAL)) {
+	    if (App.vim.replaceRequest) {
+	      replaced = true;
+	      App.vim.replaceRequest = false;
+	      setTimeout(function () {
+	        App.vim.selectPrevCharacter();
+	      }, 50);
 	    } else {
-	        if(code != 27){
-	            var p = App.textUtil.getCursorPosition();
-	            App.recordText(undefined, (p-1>=0 ? p-1:p));
-	        }
+	      if (ev.preventDefault) {
+	        ev.preventDefault();
+	      } else {
+	        ev.returnValue = false;
+	      }
 	    }
-	    App._fire('input', ev, replaced);
+	  } else {
+	    if (code != 27) {
+	      var p = App.textUtil.getCursorPosition();
+	      App.recordText(undefined, p - 1 >= 0 ? p - 1 : p);
+	    }
+	  }
+	  App._fire('input', ev, replaced);
 	}
 	
 	function getEvent(e) {
-	    return e || event || window.event;
+	  return e || event || window.event;
 	}
 	
 	function getCode(ev) {
-	    var e = getEvent(ev);
-	    return e.keyCode || e.which || e.charCode;
+	  var e = getEvent(ev);
+	  return e.keyCode || e.which || e.charCode;
 	}
 
 
-/***/ },
+/***/ }),
 /* 11 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * Created by top on 15-9-6.
@@ -1605,9 +1624,9 @@
 	}
 
 
-/***/ },
+/***/ }),
 /* 12 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * current element
@@ -1686,6 +1705,6 @@
 	
 
 
-/***/ }
+/***/ })
 /******/ ]);
 //# sourceMappingURL=vim.js.map
